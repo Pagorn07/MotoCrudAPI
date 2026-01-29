@@ -2,40 +2,60 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\{ApiResource, Get, GetCollection, Post, Patch, Delete};
 use App\Repository\MotorcycleRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MotorcycleRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['motorcycle:read']]),
+        new GetCollection(normalizationContext: ['groups' => ['motorcycle:read']]),
+        new Post(
+            normalizationContext: ['groups' => ['motorcycle:read']],
+            denormalizationContext: ['groups' => ['motorcycle:write', 'motorcycle:create']]
+        ),
+        new Patch(
+            normalizationContext: ['groups' => ['motorcycle:read']],
+            denormalizationContext: ['groups' => ['motorcycle:write']]
+        ),
+        new Delete()
+    ]
+)]
 class Motorcycle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['motorcycle:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "El modelo es obligatiorio")]
     #[Assert\Length(max: 50)]
+    #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private ?string $model = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "La cilindrada es obligatoria")]
     #[Assert\Type(type: 'integer')]
+    #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private ?int $engineCapacity = null;
 
     #[ORM\Column(length: 40)]
     #[Assert\NotBlank(message: "La marca es obligatoria")]
     #[Assert\Length(max: 40)]
+    #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private ?string $brand = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "El tipo es obligatorio")]
+    #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private ?string $type = null;
 
     #[ORM\Column(type: Types::JSON)]
@@ -44,21 +64,26 @@ class Motorcycle
     #[Assert\All([
         new Assert\Type(type: 'string', message: 'Cada extra debe ser un string')
     ])]
+    #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private array $extras = [];
 
     #[ORM\Column(nullable: true)]
     #[Assert\Type(type: 'integer')]
+    #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private ?int $weight = null;
 
     #[ORM\Column]
+    #[Groups(['motorcycle:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(['motorcycle:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Edición limitada es obligatorio")]
     #[Assert\Type(type: 'bool')]
+    #[Groups(['motorcycle:read', 'motorcycle:create'])]
     private ?bool $limitedEdition = null;
 
     public function getId(): ?int

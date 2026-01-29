@@ -6,4 +6,6 @@ services:
     container_name: motoapi_php
     volumes:
       - .:/app
+    ports:
+      - "8081:8000"
     tty: true

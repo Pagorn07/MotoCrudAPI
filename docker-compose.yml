@@ -1,0 +1,9 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: motoapi_php
+    volumes:
+      - .:/app
+    tty: true

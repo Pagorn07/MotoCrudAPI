@@ -3,9 +3,29 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    container_name: motoapi_php
+    container_name: motocrudapi_php
     volumes:
       - .:/app
     ports:
       - "8081:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "mysql://user:user@db:3306/motocrudapi?serverVersion=8.4&charset=utf8mb4"
     tty: true
+  
+  db:
+    image: mysql:8.0
+    container_name: motocrudapi_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: motocrudapi
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

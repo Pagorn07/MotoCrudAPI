@@ -7,6 +7,13 @@ init-project:
 	docker exec motocrudapi_php composer install
 	@echo "Project initialized successfully"
 
+update-database-schema:
+	@echo "Creating database..."
+	@docker exec motocrudapi_php php bin/console doctrine:database:create --if-not-exists
+	@echo "Running migrations..."
+	@docker exec motocrudapi_php php bin/console doctrine:migrations:migrate --no-interaction
+	@echo "Database schema updated successfully"
+
 start:
 	@echo "Starting containers..."
 	docker-compose up -d

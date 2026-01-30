@@ -14,6 +14,11 @@ update-database-schema:
 	@docker exec motocrudapi_php php bin/console doctrine:migrations:migrate --no-interaction
 	@echo "Database schema updated successfully"
 
+load-fixtures-data:
+	@echo "Loading fixtures data..."
+	@docker exec motocrudapi_php php bin/console doctrine:fixtures:load --no-interaction
+	@echo "Fixtures loaded successfully"
+
 start:
 	@echo "Starting containers..."
 	docker-compose up -d

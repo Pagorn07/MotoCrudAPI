@@ -34,7 +34,7 @@ final class MotorcycleFactory extends PersistentProxyObjectFactory
         return [
             'brand' => self::faker()->text(40),
             'engineCapacity' => self::faker()->numberBetween(125, 1200),
-            'extras' => [],
+            'extras' => [self::faker()->word()],
             'limitedEdition' => self::faker()->boolean(),
             'model' => self::faker()->text(50),
             'type' => self::faker()->text(50),

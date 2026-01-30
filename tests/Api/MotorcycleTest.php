@@ -86,17 +86,40 @@ class MotorcycleTest extends ApiTestCase
         $this->assertMatchesResourceItemJsonSchema(Motorcycle::class);
     }
 
+    public function testUpdateMotorcycle(): void
+    {
+        MotorcycleFactory::createOne(['brand' => 'Kawasaki']);
+
+        $iri = $this->findIriBy(Motorcycle::class, ['brand' => 'Kawasaki']);
+
+        static::createClient()->request('PATCH', $iri, [
+            'json' => [
+                'model' => 'Ninja 7 Hybrid',
+            ],
+            'headers' => [
+                'Content-Type' => 'application/merge-patch+json'
+            ]
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => $iri,
+            'brand' => 'Kawasaki',
+            'model' => 'Ninja 7 Hybrid',
+        ]);
+    }
+
     public function testDeleteMotorcycle(): void
     {
-        MotorcycleFactory::createOne(['brand' => 'to_delete']);
+        MotorcycleFactory::createOne(['brand' => 'Kawasaki']);
 
-        $iri = $this->findIriBy(Motorcycle::class, ['brand' => 'to_delete']);
+        $iri = $this->findIriBy(Motorcycle::class, ['brand' => 'Kawasaki']);
 
         static::createClient()->request('DELETE', $iri);
 
         $this->assertResponseStatusCodeSame(204);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(Motorcycle::class)->findOneBy(['brand' => 'to_delete'])
+            static::getContainer()->get('doctrine')->getRepository(Motorcycle::class)->findOneBy(['brand' => 'Kawasaki'])
         );
     }
 }

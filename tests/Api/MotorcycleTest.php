@@ -70,6 +70,18 @@ class MotorcycleTest extends ApiTestCase
             'application/ld+json; charset=utf-8'
         );
 
+        $this->assertJsonContains([
+            '@context' => '/api/contexts/Motorcycle',
+            '@type' =>'Motorcycle',
+            'model' => 'Test Bike',
+            'engineCapacity' => 600,
+            'brand' => 'Test Brand',
+            'type' => 'Deportiva',
+            'extras' => ['ABS'],
+            'weight' => 200,
+            'limitedEdition' => false
+        ]);
+
         $this->assertMatchesRegularExpression('~^/api/motorcycles/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(Motorcycle::class);
     }

@@ -12,15 +12,19 @@ class MotorcycleTest extends ApiTestCase
 {
     use ResetDatabase, Factories;
 
+    protected static ?bool $alwaysBootKernel = true;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        self::bootKernel();
+    }
+
     public function testGetCollection(): void
     {
-        static::$alwaysBootKernel = true;
-
-        $client = static::createClient();
-
         MotorcycleFactory::createMany(100);
 
-        $response = $client->request('GET', '/api/motorcycles');
+        $response = static::createClient()->request('GET', '/api/motorcycles');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -45,8 +49,6 @@ class MotorcycleTest extends ApiTestCase
 
     public function testCreateMotorcycle(): void
     {
-        static::$alwaysBootKernel = true;
-
         $client = static::createClient();
 
         $content = [
@@ -70,5 +72,19 @@ class MotorcycleTest extends ApiTestCase
 
         $this->assertMatchesRegularExpression('~^/api/motorcycles/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(Motorcycle::class);
+    }
+
+    public function testDeleteMotorcycle(): void
+    {
+        MotorcycleFactory::createOne(['brand' => 'to_delete']);
+
+        $iri = $this->findIriBy(Motorcycle::class, ['brand' => 'to_delete']);
+
+        static::createClient()->request('DELETE', $iri);
+
+        $this->assertResponseStatusCodeSame(204);
+        $this->assertNull(
+            static::getContainer()->get('doctrine')->getRepository(Motorcycle::class)->findOneBy(['brand' => 'to_delete'])
+        );
     }
 }

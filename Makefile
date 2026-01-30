@@ -52,3 +52,6 @@ shell-php:
 
 shell-db:
 	@docker exec -it motocrudapi_db mysql -u user -p
+
+test:
+	@docker exec motocrudapi_php php bin/phpunit

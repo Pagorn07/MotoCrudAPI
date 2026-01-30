@@ -12,6 +12,10 @@ update-database-schema:
 	@docker exec motocrudapi_php php bin/console doctrine:database:create --if-not-exists
 	@echo "Running migrations..."
 	@docker exec motocrudapi_php php bin/console doctrine:migrations:migrate --no-interaction
+	@echo "Setting up test database..."
+	@docker exec motocrudapi_db mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS motocrudapi_test;"
+	@docker exec motocrudapi_db mysql -u root -proot -e "GRANT ALL PRIVILEGES ON motocrudapi_test.* TO 'user'@'%'; FLUSH PRIVILEGES;"
+	@docker exec motocrudapi_php php bin/console doctrine:migrations:migrate --env=test --no-interaction
 	@echo "Database schema updated successfully"
 
 load-fixtures-data:

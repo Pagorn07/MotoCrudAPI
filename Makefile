@@ -1,4 +1,4 @@
-.PHONY: init-project start stop
+.PHONY: init-project start stop update-database-schema load-fixtures-data clean clean-all
 
 init-project:
 	@echo "Initializing project..."
@@ -29,3 +29,13 @@ stop:
 	@echo "Stopping containers..."
 	docker-compose down
 	@echo "Containers stopped successfully"
+
+clean:
+	@echo "Stopping and removing containers..."
+	docker-compose down
+	@echo "Containers removed successfully"
+
+clean-all:
+	@echo "Stopping and removing containers, volumes and images..."
+	docker-compose down -v --rmi local
+	@echo "Project cleaned completely"

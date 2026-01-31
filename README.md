@@ -35,7 +35,7 @@ API REST para la gestión de motocicletas (CRUD completo) construida con Symfony
 ### 1. Clonar el repositorio
 ```bash
 git clone https://github.com/Pagorn07/MotoCrudAPI.git
-cd motocrudapi
+cd MotoCrudAPI
 ```
 
 ### 2. Inicializar el proyecto

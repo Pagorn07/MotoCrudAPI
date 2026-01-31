@@ -175,4 +175,23 @@ class MotorcycleTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
     }
+
+    public function testCreatedAtAndUpdatedAtAreAutomatic(): void
+    {
+        $response = static::createClient()->request('POST', '/api/motorcycles', ['json' => [
+            'model' => 'Test',
+            'engineCapacity' => 600,
+            'brand' => 'Test',
+            'type' => 'Deportiva',
+            'extras' => ['ABS'],
+            'limitedEdition' => false
+        ]]);
+
+        $data = $response->toArray();
+
+        $this->assertArrayHasKey('createdAt', $data);
+        $this->assertArrayHasKey('updatedAt', $data);
+        $this->assertNotNull($data['createdAt']);
+        $this->assertNotNull($data['updatedAt']);
+    }
 }

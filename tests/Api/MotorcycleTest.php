@@ -122,4 +122,27 @@ class MotorcycleTest extends ApiTestCase
             static::getContainer()->get('doctrine')->getRepository(Motorcycle::class)->findOneBy(['brand' => 'Kawasaki'])
         );
     }
+
+    public function testCannotUpdateLimitedEdition(): void
+    {
+        MotorcycleFactory::createOne(['limitedEdition' => false]);
+
+        $iri = $this->findIriBy(Motorcycle::class, ['limitedEdition' => false]);
+
+        static::createClient()->request('PATCH', $iri, [
+            'json' => [
+                'limitedEdition' => true,
+            ],
+            'headers' => [
+                'Content-Type' => 'application/merge-patch+json'
+            ]
+        ]);
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertJsonContains([
+        '@id' => $iri,
+        'limitedEdition' => false
+    ]);
+    }
 }

@@ -26,7 +26,7 @@ load-fixtures-data:
 start:
 	@echo "Starting containers..."
 	@docker compose up -d
-	@echo "Starting server on http://localhost:8081"
+	@echo "Starting server on http://localhost:8081/api"
 	@docker exec -d motocrudapi_php php -S 0.0.0.0:8000 -t public
 
 stop:

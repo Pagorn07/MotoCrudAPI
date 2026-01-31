@@ -36,7 +36,7 @@ class Motorcycle
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: "El modelo es obligatiorio")]
+    #[Assert\NotBlank(message: "El modelo es obligatorio")]
     #[Assert\Length(max: 50)]
     #[Groups(['motorcycle:read', 'motorcycle:write'])]
     private ?string $model = null;
@@ -59,7 +59,7 @@ class Motorcycle
     private ?string $type = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Assert\NotBlank(message: "Los extras son obligatorios")]
+    #[Assert\NotNull(message: "Los extras son obligatorios")]
     #[Assert\Count(max: 20, maxMessage: "No puede haber más de 20 extras")]
     #[Assert\All([
         new Assert\Type(type: 'string', message: 'Cada extra debe ser un string')

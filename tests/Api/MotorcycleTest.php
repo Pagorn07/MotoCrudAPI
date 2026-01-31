@@ -141,8 +141,38 @@ class MotorcycleTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         $this->assertJsonContains([
-        '@id' => $iri,
-        'limitedEdition' => false
-    ]);
+            '@id' => $iri,
+            'limitedEdition' => false
+        ]);
+    }
+
+    public function testCreateMotorcycleWithInvalidData(): void
+    {
+        $response = static::createClient()->request('POST', '/api/motorcycles', ['json' => [
+            'model' => str_repeat('a', 51), // More than 50 characters
+            'engineCapacity' => 600,
+            'brand' => 'Test',
+            'type' => 'Deportiva',
+            'extras' => ['ABS'],
+            'limitedEdition' => false
+        ]]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
+    }
+
+    public function testCreateMotorcycleWithTooManyExtras(): void
+    {
+        static::createClient()->request('POST', '/api/motorcycles', ['json' => [
+            'model' => 'Test',
+            'engineCapacity' => 600,
+            'brand' => 'Test',
+            'type' => 'Deportiva',
+            'extras' => array_fill(0, 21, 'extra'),
+            'limitedEdition' => false
+        ]]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
     }
 }
